@@ -69,26 +69,45 @@
 
         try {
           const cleanUsername = username.replace(/^@/, '');
-          const response = await fetch(
-            `https://api.neynar.com/v2/farcaster/user/bulk?fids=&usernames=${encodeURIComponent(cleanUsername)}`,
-            {
-              headers: {
-                'accept': 'application/json',
-                'api-key': (() => { let k=''; try { k = import.meta.env?.VITE_NEYNAR_API_KEY ?? ''; } catch(_) {} return k || window.NEYNAR_API_KEY || localStorage.getItem('NEYNAR_API_KEY') || 'ED2189A3-1259-4873-9ED3-67F9B53BDBE7'; })()
-              }
-            }
-          );
+          const apiKey = (() => { let k=''; try { k = import.meta.env?.VITE_NEYNAR_API_KEY ?? ''; } catch(_) {} return k || window.NEYNAR_API_KEY || localStorage.getItem('NEYNAR_API_KEY') || 'ED2189A3-1259-4873-9ED3-67F9B53BDBE7'; })();
+          const headers = { 'accept': 'application/json', 'api_key': apiKey, 'X-API-KEY': apiKey, 'api-key': apiKey };
 
-          if (!response.ok) {
-            throw new Error('User not found or API error');
+          let found = false;
+          let resp = await fetch(`https://api.neynar.com/v2/farcaster/user/bulk?fids=&usernames=${encodeURIComponent(cleanUsername)}`, { headers });
+          if (resp.ok) {
+            const data = await resp.json();
+            if (data.users && data.users.length > 0) {
+              setUserData(data.users[0]);
+              found = true;
+            }
           }
 
-          const data = await response.json();
-          
-          if (data.users && data.users.length > 0) {
-            setUserData(data.users[0]);
-          } else {
-            setError('User not found');
+          if (!found) {
+            resp = await fetch(`https://api.neynar.com/v2/farcaster/user?username=${encodeURIComponent(cleanUsername)}`, { headers });
+            if (resp.ok) {
+              const d = await resp.json();
+              const u = d.user || d;
+              if (u) {
+                setUserData(u);
+                found = true;
+              }
+            }
+          }
+
+          if (!found) {
+            resp = await fetch(`https://api.neynar.com/v2/farcaster/user/by-username?username=${encodeURIComponent(cleanUsername)}`, { headers });
+            if (resp.ok) {
+              const d = await resp.json();
+              const u = d.user || d;
+              if (u) {
+                setUserData(u);
+                found = true;
+              }
+            }
+          }
+
+          if (!found) {
+            throw new Error('User not found or API error');
           }
         } catch (err) {
           setError(err.message || 'Failed to fetch user data');
