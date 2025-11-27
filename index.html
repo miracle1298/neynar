@@ -162,13 +162,16 @@
                   )}
                 </button>
               </div>
-              <div className="mt-3">
+              <div className="mt-3 flex items-center gap-2">
                 {(() => {
                   const present = !!(window.NEYNAR_API_KEY || localStorage.getItem('NEYNAR_API_KEY'));
                   return (
-                    <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-semibold ${present ? 'bg-green-500/20 border border-green-400/50 text-green-200' : 'bg-red-500/20 border border-red-400/50 text-red-200'}`}>
-                      {present ? 'API key detected' : 'API key missing'}
-                    </span>
+                    <>
+                      <span className={`inline-block w-2 h-2 rounded-full ${present ? 'bg-green-400' : 'bg-red-400'}`}></span>
+                      <span className={`text-sm font-medium ${present ? 'text-green-200' : 'text-red-200'}`}>
+                        {present ? 'API key detected' : 'API key missing'}
+                      </span>
+                    </>
                   );
                 })()}
               </div>
