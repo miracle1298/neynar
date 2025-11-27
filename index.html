@@ -74,7 +74,7 @@
             {
               headers: {
                 'accept': 'application/json',
-                'api-key': 'ED2189A3-1259-4873-9ED3-67F9B53BDBE7'
+                'api-key': (() => { let k=''; try { k = import.meta.env?.VITE_NEYNAR_API_KEY ?? ''; } catch(_) {} return k || window.NEYNAR_API_KEY || localStorage.getItem('NEYNAR_API_KEY') || 'ED2189A3-1259-4873-9ED3-67F9B53BDBE7'; })()
               }
             }
           );
