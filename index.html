@@ -108,6 +108,13 @@
               setUserData(u);
               found = true;
             }
+          } else {
+            try {
+              const errBody = await resp.json();
+              if (resp.status === 401 || resp.status === 402) {
+                throw new Error(`${resp.status} ${errBody.message || 'Invalid or gated API key'}`);
+              }
+            } catch (_) {}
           }
 
           if (!found) {
@@ -119,13 +126,17 @@
                 setUserData(u);
                 found = true;
               }
+            } else {
+              try {
+                const errBody = await resp.json();
+                if (resp.status === 401 || resp.status === 402) {
+                  throw new Error(`${resp.status} ${errBody.message || 'Invalid or gated API key'}`);
+                }
+              } catch (_) {}
             }
           }
 
           if (!found) {
-            if (resp && (resp.status === 401 || resp.status === 402)) {
-              throw new Error('Invalid or gated API key. Check your Neynar plan.');
-            }
             throw new Error('User not found or API error');
           }
         } catch (err) {
