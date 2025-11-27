@@ -73,29 +73,18 @@
           const headers = { 'accept': 'application/json', 'api_key': apiKey, 'X-API-KEY': apiKey, 'api-key': apiKey };
 
           let found = false;
-          let resp = await fetch(`https://api.neynar.com/v2/farcaster/user/bulk?fids=&usernames=${encodeURIComponent(cleanUsername)}`, { headers });
+          let resp = await fetch(`https://api.neynar.com/v2/farcaster/user/by-username?username=${encodeURIComponent(cleanUsername)}`, { headers });
           if (resp.ok) {
-            const data = await resp.json();
-            if (data.users && data.users.length > 0) {
-              setUserData(data.users[0]);
+            const d = await resp.json();
+            const u = d.user || d;
+            if (u) {
+              setUserData(u);
               found = true;
             }
           }
 
           if (!found) {
             resp = await fetch(`https://api.neynar.com/v2/farcaster/user?username=${encodeURIComponent(cleanUsername)}`, { headers });
-            if (resp.ok) {
-              const d = await resp.json();
-              const u = d.user || d;
-              if (u) {
-                setUserData(u);
-                found = true;
-              }
-            }
-          }
-
-          if (!found) {
-            resp = await fetch(`https://api.neynar.com/v2/farcaster/user/by-username?username=${encodeURIComponent(cleanUsername)}`, { headers });
             if (resp.ok) {
               const d = await resp.json();
               const u = d.user || d;
