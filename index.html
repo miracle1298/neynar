@@ -97,7 +97,7 @@
           if (!apiKey) {
             throw new Error('API key missing. Add your Neynar API key.');
           }
-          const headers = { 'accept': 'application/json', 'api_key': apiKey, 'X-API-KEY': apiKey, 'api-key': apiKey };
+          const headers = { 'accept': 'application/json', 'api-key': apiKey };
 
           let found = false;
           let resp = await fetch(`https://api.neynar.com/v2/farcaster/user/by-username?username=${encodeURIComponent(cleanUsername)}`, { headers });
