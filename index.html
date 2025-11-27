@@ -97,10 +97,24 @@
           if (!apiKey) {
             throw new Error('API key missing. Add your Neynar API key.');
           }
-          const headers = { 'accept': 'application/json', 'api-key': apiKey };
+          const fetchWithHeaders = async (url) => {
+            const headerVariants = [
+              { 'accept': 'application/json', 'X-API-KEY': apiKey },
+              { 'accept': 'application/json', 'api-key': apiKey },
+              { 'accept': 'application/json', 'api_key': apiKey },
+            ];
+            let lastResp = null;
+            for (let i = 0; i < headerVariants.length; i++) {
+              const resp = await fetch(url, { headers: headerVariants[i] });
+              lastResp = resp;
+              if (resp.ok) return resp;
+              if (resp.status !== 401) return resp;
+            }
+            return lastResp;
+          };
 
           let found = false;
-          let resp = await fetch(`https://api.neynar.com/v2/farcaster/user/by-username?username=${encodeURIComponent(cleanUsername)}`, { headers });
+          let resp = await fetchWithHeaders(`https://api.neynar.com/v2/farcaster/user/by-username?username=${encodeURIComponent(cleanUsername)}`);
           if (resp.ok) {
             const d = await resp.json();
             const u = d.user || d;
@@ -118,7 +132,7 @@
           }
 
           if (!found) {
-            resp = await fetch(`https://api.neynar.com/v2/farcaster/user?username=${encodeURIComponent(cleanUsername)}`, { headers });
+            resp = await fetchWithHeaders(`https://api.neynar.com/v2/farcaster/user?username=${encodeURIComponent(cleanUsername)}`);
             if (resp.ok) {
               const d = await resp.json();
               const u = d.user || d;
