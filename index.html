@@ -68,12 +68,13 @@
         setUserData(null);
 
         try {
+          const cleanUsername = username.replace(/^@/, '');
           const response = await fetch(
-            `https://api.neynar.com/v2/farcaster/user/bulk?fids=&usernames=${encodeURIComponent(username)}`,
+            `https://api.neynar.com/v2/farcaster/user/bulk?fids=&usernames=${encodeURIComponent(cleanUsername)}`,
             {
               headers: {
                 'accept': 'application/json',
-                'api_key': ''
+                'api-key': 'ED2189A3-1259-4873-9ED3-67F9B53BDBE7'
               }
             }
           );
@@ -299,12 +300,12 @@
               </ul>
 
               <a
-                href="https://docs.neynar.com/docs/neynar-score-overview"
+                href="https://neynar-three.vercel.app/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block mt-4 text-orange-400 hover:text-orange-300 transition-colors"
               >
-                Learn more in Neynar documentation →
+                Learn more →
               </a>
             </div>
           </div>
