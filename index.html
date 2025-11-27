@@ -57,6 +57,14 @@
         loadSDK();
       }, []);
 
+      useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const k = window.NEYNAR_API_KEY || params.get('key') || params.get('apiKey') || params.get('api_key');
+        if (k) {
+          try { localStorage.setItem('NEYNAR_API_KEY', k); } catch (e) {}
+        }
+      }, []);
+
       const checkScore = async () => {
         if (!username.trim()) {
           setError('Please enter a username');
